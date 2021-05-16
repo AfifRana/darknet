@@ -33,6 +33,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     char *backup_directory = option_find_str(options, "backup", "/backup/");
     global_patience = (unsigned short) option_find_int_quiet(options, "patience", 0);
     use_early_stopping = option_find_int_quiet(options, "use_early_stopping", 0);
+    if (global_patience != 0) printf("\n Detector.c line 36: Read patience from cfg = %d\n", global_patience);
+    if (use_early_stopping != 0) printf("\n Detector.c line 37: Early stopping is used\n");
 
     network net_map;
     if (calc_map) {
@@ -363,6 +365,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             mean_average_precision = validate_detector_map(datacfg, cfgfile, weightfile, 0.25, 0.5, 0, net.letter_box, &net_map, &loss);// &net_combined);
             early_stop = early_stopping_system(loss);
 			if (early_stop == 1) {
+				printf("\n detector.c line 368: early stop triggered \n");
 				char buff[256];
 				sprintf(buff, "%s/%s_earlystop.weights", backup_directory, base);
 				save_weights(net, buff);
@@ -1209,7 +1212,9 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
     
     if(loss)
     {
+    	printf("\n total cost / total rows = %f / %d = ", sum_cost, sum_rows);
     	*loss = (float) sum_cost/sum_rows;
+    	printf("%f \n", *loss);
 	}
 
     //for (t = 0; t < nthreads; ++t) {

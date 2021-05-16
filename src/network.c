@@ -176,8 +176,9 @@ float get_current_rate(network net)
 		{
 			static float prev_loss = 0.0;
 			float loss = fabs(get_network_cost(net) - prev_loss);
-			prev_loss = get_network_cost(net)
+			prev_loss = get_network_cost(net);
 			rate = loss * net.learning_rate;
+			printf("\n SGD rate policy in network.c line 181: loss is %f making rate of %f \n", loss, rate);
 			if (rate < net.learning_rate_min)
 			{
 				rate = net.learning_rate_min;
