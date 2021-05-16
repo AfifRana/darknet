@@ -172,6 +172,18 @@ float get_current_rate(network net)
 
             return rate;
         }
+        case SGD:
+		{
+			static float prev_loss = 0.0;
+			float loss = fabs(get_network_cost(net) - prev_loss);
+			prev_loss = get_network_cost(net)
+			rate = loss * net.learning_rate;
+			if (rate < net.learning_rate_min)
+			{
+				rate = net.learning_rate_min;
+			}
+			return rate;
+		}
         default:
             fprintf(stderr, "Policy is weird!\n");
             return net.learning_rate;
