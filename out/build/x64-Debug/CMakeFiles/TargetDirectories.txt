@@ -1,0 +1,8 @@
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/dark.dir
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/uselib.dir
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/install/local.dir
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/install.dir
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/darknet.dir
+E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug/CMakeFiles/list_install_components.dir
