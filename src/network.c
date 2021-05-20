@@ -172,7 +172,7 @@ float get_current_rate(network net)
 
             return rate;
         }
-        case SGD:
+        case MBGD:
 		{
 			//static float prev_loss = 0.0;
 			//float loss = fabs(get_network_cost(net) - prev_loss);

@@ -1138,14 +1138,14 @@ extern "C" void draw_train_loss(char *windows_name, mat_cv* img_src, int img_siz
             cv::putText(img, char_buff, cv::Point(10, 28), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255, 255, 255), 5, CV_AA);
             cv::putText(img, char_buff, cv::Point(10, 28), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(200, 0, 0), 1, CV_AA);
 
-//            if ((std::fabs(old_precision - precision) > 0.1)  || (max_precision < precision) || (current_batch - text_iteration_old) >= max_batches / 10) {
-//                text_iteration_old = current_batch;
-//                max_precision = std::max(max_precision, precision);
-//                sprintf(char_buff, "%2.0f%% ", precision * 100);
-//                cv::putText(img, char_buff, cv::Point(pt1.x - 30, draw_size * (1 - precision) + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255, 255, 255), 5, CV_AA);
-//                cv::putText(img, char_buff, cv::Point(pt1.x - 30, draw_size * (1 - precision) + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(200, 0, 0), 1, CV_AA);
-//            }
-//			ini untuk hilangin tulisan persen kalau pake loss
+            if ((std::fabs(old_precision - precision) > 0.1)  || (max_precision < precision) || (current_batch - text_iteration_old) >= max_batches / 10) {
+                text_iteration_old = current_batch;
+                max_precision = std::max(max_precision, precision);
+                sprintf(char_buff, "%2.0f%% ", precision * 100);
+                cv::putText(img, char_buff, cv::Point(pt1.x - 30, draw_size * (1 - precision) + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255, 255, 255), 5, CV_AA);
+                cv::putText(img, char_buff, cv::Point(pt1.x - 30, draw_size * (1 - precision) + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(200, 0, 0), 1, CV_AA);
+            }
+			ini untuk hilangin tulisan persen kalau pake loss
 
             old_precision = precision;
             iteration_old = current_batch;

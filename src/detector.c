@@ -361,9 +361,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             //network net_combined = combine_train_valid_networks(net, net_map);
 
             iter_map = iteration;
-            float loss = 0.0;
-            mean_average_precision = validate_detector_map(datacfg, cfgfile, weightfile, 0.25, 0.5, 0, net.letter_box, &net_map, &loss);// &net_combined);
-            early_stop = early_stopping_system(loss);
+            mean_average_precision = validate_detector_map(datacfg, cfgfile, weightfile, 0.25, 0.5, 0, net.letter_box, &net_map);// &net_combined);
+            early_stop = early_stopping_system(mean_average_precision);
 			if (early_stop == 1) {
 				printf("\n detector.c line 368: early stop triggered \n");
 				char buff[256];
@@ -395,8 +394,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         }
         // supaya konstan menuliskan loss
         draw_precision = 1;
-//        draw_train_loss(windows_name, img, img_size, avg_loss, max_img_loss, iteration, net.max_batches, mean_average_precision, draw_precision, "mAP%", avg_contrastive_acc / 100, dont_show, mjpeg_port, avg_time);
-        draw_train_loss(windows_name, img, img_size, avg_loss, max_img_loss, iteration, net.max_batches, loss, draw_precision, "mAP%", avg_contrastive_acc / 100, dont_show, mjpeg_port, avg_time);
+        draw_train_loss(windows_name, img, img_size, avg_loss, max_img_loss, iteration, net.max_batches, mean_average_precision, draw_precision, "mAP%", avg_contrastive_acc / 100, dont_show, mjpeg_port, avg_time);
+//        draw_train_loss(windows_name, img, img_size, avg_loss, max_img_loss, iteration, net.max_batches, loss, draw_precision, "mAP%", avg_contrastive_acc / 100, dont_show, mjpeg_port, avg_time);
 #endif    // OPENCV
 
         //if (i % 1000 == 0 || (i < 1000 && i % 100 == 0)) {
@@ -946,7 +945,7 @@ int detections_comparator(const void *pa, const void *pb)
     return 0;
 }
 
-float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float thresh_calc_avg_iou, const float iou_thresh, const int map_points, int letter_box, network *existing_net, float *loss)
+float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, float thresh_calc_avg_iou, const float iou_thresh, const int map_points, int letter_box, network *existing_net)
 {
     int j;
     list *options = read_data_cfg(datacfg);
@@ -1054,8 +1053,8 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
         thr[t] = load_data_in_thread(args);
     }
     time_t start = time(0);
-    int sum_rows= 0;
-    float sum_cost = 0.0;
+//    int sum_rows= 0;
+//    float sum_cost = 0.0;
     for (i = nthreads; i < m + nthreads; i += nthreads) {
         fprintf(stderr, "\r%d", i);
         for (t = 0; t < nthreads && (i + t - nthreads) < m; ++t) {
@@ -1074,9 +1073,9 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
             char *path = paths[image_index];
             char *id = basecfg(path);
             float *X = val_resized[t].data;
-            sum_rows += *X.rows;
+//            sum_rows += *X.rows;
             network_predict(net, X);
-            sum_cost += get_network_cost(net);
+//            sum_cost += get_network_cost(net);
 
             int nboxes = 0;
             float hier_thresh = 0;
@@ -1210,12 +1209,12 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
         }
     }
     
-    if(loss)
-    {
-    	printf("\n total cost / total rows = %f / %d = ", sum_cost, sum_rows);
-    	*loss = (float) sum_cost/sum_rows;
-    	printf("%f \n", *loss);
-	}
+//    if(loss)
+//    {
+//    	printf("\n total cost / total rows = %f / %d = ", sum_cost, sum_rows);
+//    	*loss = (float) sum_cost/sum_rows;
+//    	printf("%f \n", *loss);
+//	}
 
     //for (t = 0; t < nthreads; ++t) {
     //    pthread_join(thr[t], 0);
@@ -2046,7 +2045,7 @@ void run_detector(int argc, char **argv)
     else if (0 == strcmp(argv[2], "train")) train_detector(datacfg, cfg, weights, gpus, ngpus, clear, dont_show, calc_map, mjpeg_port, show_imgs, benchmark_layers, chart_path);
     else if (0 == strcmp(argv[2], "valid")) validate_detector(datacfg, cfg, weights, outfile);
     else if (0 == strcmp(argv[2], "recall")) validate_detector_recall(datacfg, cfg, weights);
-    else if (0 == strcmp(argv[2], "map")) validate_detector_map(datacfg, cfg, weights, thresh, iou_thresh, map_points, letter_box, NULL, NULL);
+    else if (0 == strcmp(argv[2], "map")) validate_detector_map(datacfg, cfg, weights, thresh, iou_thresh, map_points, letter_box, NULL);
     else if (0 == strcmp(argv[2], "calc_anchors")) calc_anchors(datacfg, num_of_clusters, width, height, show);
     else if (0 == strcmp(argv[2], "draw")) {
         int it_num = 100;
@@ -2071,24 +2070,24 @@ void run_detector(int argc, char **argv)
     if (gpus && gpu_list && ngpus > 1) free(gpus);
 }
 
-unsigned short early_stopping_system(float valid_loss) 
+unsigned short early_stopping_system(float valid_map) 
 {
-	static float *valid_loss_prev = NULL;
+	static float *valid_map_prev = NULL;
 	static float temp;
 	
 	static unsigned short patience_counter = 0;
 	unsigned short patience = global_patience;
 	
-	if (!valid_loss_prev) 
+	if (!valid_map_prev) 
 	{
-		temp = valid_loss;
-		valid_loss_prev = &temp;
+		temp = valid_map;
+		valid_map_prev = &temp;
 		patience_counter = 0;
 		return 0;		
 	} 
-	else if ((patience_counter>0 && *valid_loss_prev<=valid_loss) || (patience_counter==0 && *valid_loss_prev<valid_loss)) 
+	else if ((patience_counter>0 && *valid_map_prev>=valid_map) || (patience_counter==0 && *valid_map_prev>valid_map)) 
 	{
-		*valid_loss_prev = valid_loss;
+		*valid_map_prev = valid_map;
 		patience_counter += 1;
 		
 		if (patience_counter >= patience){
@@ -2099,7 +2098,7 @@ unsigned short early_stopping_system(float valid_loss)
 	} 
 	else 
 	{
-		*valid_loss_prev = valid_loss;
+		*valid_map_prev = valid_map;
 		patience_counter = 0;
 		return 0;
 	}	
