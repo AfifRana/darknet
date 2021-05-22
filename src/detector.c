@@ -393,7 +393,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             printf("  avg_contrastive_acc = %f \n", avg_contrastive_acc);
         }
         // supaya konstan menuliskan loss
-        draw_precision = 1;
+//        draw_precision = 1;
         draw_train_loss(windows_name, img, img_size, avg_loss, max_img_loss, iteration, net.max_batches, mean_average_precision, draw_precision, "mAP%", avg_contrastive_acc / 100, dont_show, mjpeg_port, avg_time);
 //        draw_train_loss(windows_name, img, img_size, avg_loss, max_img_loss, iteration, net.max_batches, loss, draw_precision, "mAP%", avg_contrastive_acc / 100, dont_show, mjpeg_port, avg_time);
 #endif    // OPENCV
