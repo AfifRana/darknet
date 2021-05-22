@@ -1145,7 +1145,7 @@ extern "C" void draw_train_loss(char *windows_name, mat_cv* img_src, int img_siz
                 cv::putText(img, char_buff, cv::Point(pt1.x - 30, draw_size * (1 - precision) + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(255, 255, 255), 5, CV_AA);
                 cv::putText(img, char_buff, cv::Point(pt1.x - 30, draw_size * (1 - precision) + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.7, CV_RGB(200, 0, 0), 1, CV_AA);
             }
-			ini untuk hilangin tulisan persen kalau pake loss
+//			ini untuk hilangin tulisan persen kalau pake loss
 
             old_precision = precision;
             iteration_old = current_batch;
