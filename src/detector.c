@@ -21,20 +21,49 @@ typedef __compar_fn_t comparison_fn_t;
 
 int check_mistakes = 0;
 unsigned short global_patience = 0;
-int use_early_stopping = 0;
 
 static int coco_ids[] = { 1,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,67,70,72,73,74,75,76,77,78,79,80,81,82,84,85,86,87,88,89,90 };
 
 void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, int ngpus, int clear, int dont_show, int calc_map, int mjpeg_port, int show_imgs, int benchmark_layers, char* chart_path)
 {
+	int use_early_stopping = 0;
+	int patience_num = 0;
+	int curr_patience_num = 1;
+	int early_stopping_check = 0;
     list *options = read_data_cfg(datacfg);
     char *train_images = option_find_str(options, "train", "data/train.txt");
     char *valid_images = option_find_str(options, "valid", train_images);
     char *backup_directory = option_find_str(options, "backup", "/backup/");
-    global_patience = (unsigned short) option_find_int_quiet(options, "patience", 0);
     use_early_stopping = option_find_int_quiet(options, "use_early_stopping", 0);
-    if (global_patience != 0) printf("\n Detector.c line 36: Read patience from cfg = %d\n", global_patience);
-    if (use_early_stopping != 0) printf("\n Detector.c line 37: Early stopping is used\n");
+    if (use_early_stopping != 0)
+	{
+		printf("\n Detector.c line 39: Early stopping is used\n");
+		early_stopping_check = 1;
+	}
+    patience_num = option_find_int_quiet(options, "patience_num", 1);
+	if (patience_num != 0) printf("\n detector.c line 39: number of patience used is %d\n", patience_num);
+	int patienceArr[patience_num];
+	if (patience_num == 1 && use_early_stopping == 1)
+	{
+		global_patience = (unsigned short) option_find_int_quiet(options, "patience", 0);
+		if (global_patience < 1)
+		{
+			global_patience = (unsigned short) option_find_int_quiet(options, "patience1", 1);
+		}
+		printf("\n detector.c line 48: the single patience value is %d\n", global_patience);
+	}
+	else if (patience_num > 1 && use_early_stopping == 1)
+	{
+		int patienceI;
+		for (patienceI = 0; patienceI < patience_num; patienceI++)
+		{
+			char patienceTxt[256];
+			sprintf(patienceTxt, "patience%d", patienceI+1);
+			patienceArr[patienceI] = option_find_int_quiet(options, patienceTxt, 1);
+			if (patienceArr[patienceI] != 0) printf("\n detector.c line 58: multi patience value, patience%d = %d\n", patienceI+1, patienceArr[patienceI]);
+		}
+		global_patience = patienceArr[0];
+	}
 
     network net_map;
     if (calc_map) {
@@ -362,11 +391,27 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 
             iter_map = iteration;
             mean_average_precision = validate_detector_map(datacfg, cfgfile, weightfile, 0.25, 0.5, 0, net.letter_box, &net_map);// &net_combined);
-            early_stop = early_stopping_system(mean_average_precision);
+            if (early_stopping_check != 0)
+			{
+				early_stop = early_stopping_system(mean_average_precision);
+			}
 			if (early_stop == 1) {
 				printf("\n detector.c line 368: early stop triggered \n");
 				char buff[256];
-				sprintf(buff, "%s/%s_earlystop.weights", backup_directory, base);
+				if (patience_num > 1)
+				{
+					printf("\n detector.c line 371: reset early stop for TA scenario\n");
+					early_stop = 0;
+					sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, global_patience);
+					global_patience = patienceArr[curr_patience_num];
+					curr_patience_num++;
+					if (curr_patience_num >= patience_num) early_stopping_check = 0;
+				}
+				else
+				{
+					sprintf(buff, "%s/%s_earlystop.weights", backup_directory, base);
+					early_stopping_check = 0;
+				}
 				save_weights(net, buff);
 			}
             printf("\n mean_average_precision (mAP@0.5) = %f \n", mean_average_precision);
@@ -2087,6 +2132,7 @@ unsigned short early_stopping_system(float valid_map)
 	} 
 	else if ((patience_counter>0 && *valid_map_prev>=valid_map) || (patience_counter==0 && *valid_map_prev>valid_map)) 
 	{
+		printf("\n[[ Prev mAP value = %f ]]\n[[ Curr mAP value = %f ]]\n[[ Patience counter = %d ]]\n", *valid_map_prev, valid_map, patience_counter);
 		*valid_map_prev = valid_map;
 		patience_counter += 1;
 		
@@ -2098,6 +2144,7 @@ unsigned short early_stopping_system(float valid_map)
 	} 
 	else 
 	{
+		printf("\n[[ prev mAP value = %f ]]\n[[ curr mAP value = %f]]\n[[ Patience counter = %d ]]\n", *valid_map_prev, valid_map, patience_counter);
 		*valid_map_prev = valid_map;
 		patience_counter = 0;
 		return 0;
