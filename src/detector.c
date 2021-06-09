@@ -350,6 +350,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             fflush(stderr);
         }
         printf("\n %d: %f, %f avg loss, %f rate, %lf seconds, %d images, %f hours left\n", iteration, loss, avg_loss, get_current_rate(net), (what_time_is_it_now() - time), iteration*imgs, avg_time);
+        printf(" Global patience: %d, use_early_stopping: %d, early_stopping_check: %d, curr_patience_num: %d, patience_num: %d\n", global_patience, use_early_stopping, early_stopping_check, curr_patience_num, patience_num);
         fflush(stdout);
 
         int draw_precision = 0;
@@ -2128,6 +2129,7 @@ unsigned short early_stopping_system(float valid_map)
 		temp = valid_map;
 		valid_map_prev = &temp;
 		patience_counter = 0;
+		printf("\n[ Early stopping system initialized ]\n");
 		return 0;		
 	} 
 	else if ((patience_counter>0 && *valid_map_prev>=valid_map) || (patience_counter==0 && *valid_map_prev>valid_map)) 
