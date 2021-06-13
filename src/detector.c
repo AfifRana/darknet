@@ -228,7 +228,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 
     //while(i*imgs < N*120){
     unsigned short early_stop = 0;
-    while (get_current_iteration(net) < net.max_batches && !early_stop) {
+    while (early_stop) {
+//    while (get_current_iteration(net) < net.max_batches && !early_stop) {
         if (l.random && count++ % 10 == 0) {
             float rand_coef = 1.4;
             if (l.random != 1.0) rand_coef = l.random;
