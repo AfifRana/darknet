@@ -21,35 +21,35 @@ typedef __compar_fn_t comparison_fn_t;
 
 int check_mistakes = 0;
 unsigned short global_patience = 0;
-int use_early_stopping = 0;
-int patience_num = 0;
-int curr_patience_num = 1;
-int early_stopping_check = 0;
 
 static int coco_ids[] = { 1,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,67,70,72,73,74,75,76,77,78,79,80,81,82,84,85,86,87,88,89,90 };
 
 void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, int ngpus, int clear, int dont_show, int calc_map, int mjpeg_port, int show_imgs, int benchmark_layers, char* chart_path)
 {
+	int use_early_stopping = 0;
+	int patience_num = 0;
+	int curr_patience_num = 1;
+	int early_stopping_check = 0;
     list *options = read_data_cfg(datacfg);
     char *train_images = option_find_str(options, "train", "data/train.txt");
     char *valid_images = option_find_str(options, "valid", train_images);
     char *backup_directory = option_find_str(options, "backup", "/backup/");
-    use_early_stopping = option_find_int_quiet(options, "use_early_stopping", 0);
+    use_early_stopping = option_find_int(options, "use_early_stopping", 0);
     if (use_early_stopping != 0)
 	{
 		printf("\n Detector.c line 39: Early stopping is used\n");
 		early_stopping_check = 1;
 	}
-    patience_num = option_find_int_quiet(options, "patience_num", 1);
+    patience_num = option_find_int(options, "patience_num", 1);
 	if (patience_num != 0) printf("\n detector.c line 39: number of patience used is %d\n", patience_num);
 	int patienceArr[patience_num];
 	printf("\n Detector.c line 46: Patience array created\n");
 	if (patience_num == 1 && use_early_stopping == 1)
 	{
-		global_patience = (unsigned short) option_find_int_quiet(options, "patience", 0);
+		global_patience = (unsigned short) option_find_int(options, "patience", 0);
 		if (global_patience < 1)
 		{
-			global_patience = (unsigned short) option_find_int_quiet(options, "patience1", 1);
+			global_patience = (unsigned short) option_find_int(options, "patience1", 1);
 		}
 		printf("\n detector.c line 48: the single patience value is %d\n", global_patience);
 	}
@@ -60,7 +60,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 		{
 			char patienceTxt[256];
 			sprintf(patienceTxt, "patience%d", patienceI+1);
-			patienceArr[patienceI] = option_find_int_quiet(options, patienceTxt, 1);
+			patienceArr[patienceI] = option_find_int(options, patienceTxt, 1);
 			if (patienceArr[patienceI] != 0) printf("\n detector.c line 58: multi patience value, patience%d = %d\n", patienceI+1, patienceArr[patienceI]);
 		}
 		global_patience = patienceArr[0];
