@@ -45,7 +45,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     patience_num = option_find_int(options, "patience_num", 3);
 	if (patience_num != 0) printf("\n detector.c line 39: number of patience used is %d\n", patience_num);
 	// hardcode
-	int patienceArr[patience_num] = {1, 3, 5};
+	int patienceArr[3] = {1, 3, 5};
 	printf("\n Detector.c line 46: Patience array created\n");
 	// hardcode
 	if (1 == 1)
