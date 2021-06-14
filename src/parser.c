@@ -1129,6 +1129,8 @@ learning_rate_policy get_policy(char *s)
     if (strcmp(s, "sigmoid")==0) return SIG;
     if (strcmp(s, "steps")==0) return STEPS;
     if (strcmp(s, "sgdr")==0) return SGDR;
+    if (strcmp(s, "mbgd")==0) return MBGD;
+    if (strcmp(s, "MBGD")==0) return MBGD;
     fprintf(stderr, "Couldn't find policy %s, going with constant\n", s);
     return CONSTANT;
 }

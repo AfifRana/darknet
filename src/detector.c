@@ -34,17 +34,25 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     char *train_images = option_find_str(options, "train", "data/train.txt");
     char *valid_images = option_find_str(options, "valid", train_images);
     char *backup_directory = option_find_str(options, "backup", "/backup/");
-    use_early_stopping = option_find_int(options, "use_early_stopping", 0);
+    // hardcode
+    use_early_stopping = option_find_int(options, "use_early_stopping", 1);
     if (use_early_stopping != 0)
 	{
 		printf("\n Detector.c line 39: Early stopping is used\n");
 		early_stopping_check = 1;
 	}
-    patience_num = option_find_int(options, "patience_num", 1);
+	// hardcode
+    patience_num = option_find_int(options, "patience_num", 3);
 	if (patience_num != 0) printf("\n detector.c line 39: number of patience used is %d\n", patience_num);
-	int patienceArr[patience_num];
+	// hardcode
+	int patienceArr[patience_num] = {1, 3, 5};
 	printf("\n Detector.c line 46: Patience array created\n");
-	if (patience_num == 1 && use_early_stopping == 1)
+	// hardcode
+	if (1 == 1)
+	{
+		global_patience = patienceArr[0];
+	}
+	else if (patience_num == 1 && use_early_stopping == 1)
 	{
 		global_patience = (unsigned short) option_find_int(options, "patience", 0);
 		if (global_patience < 1)
@@ -228,8 +236,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 
     //while(i*imgs < N*120){
     unsigned short early_stop = 0;
-    while (early_stop) {
-//    while (get_current_iteration(net) < net.max_batches && !early_stop) {
+//    while (early_stop) {
+    while (get_current_iteration(net) < net.max_batches && !early_stop) {
         if (l.random && count++ % 10 == 0) {
             float rand_coef = 1.4;
             if (l.random != 1.0) rand_coef = l.random;
