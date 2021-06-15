@@ -521,6 +521,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         net_map.n = 0;
         free_network(net_map);
     }
+    printf("[ bug fixing attemp June 15 10:12 ]");
 }
 
 
