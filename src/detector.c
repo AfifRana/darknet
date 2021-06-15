@@ -483,6 +483,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
                 printf(" EMA weights are saved to the file: %s \n", buff);
             }
         }
+        printf(" Last Global patience: %d, use_early_stopping: %d, early_stopping_check: %d, curr_patience_num: %d, patience_num: %d\n", global_patience, use_early_stopping, early_stopping_check, curr_patience_num, patience_num);
         free_data(train);
     }
 #ifdef GPU
