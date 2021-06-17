@@ -416,7 +416,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 					sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, global_patience);
 					global_patience = patienceArr[curr_patience_num];
 					curr_patience_num++;
-					if (curr_patience_num > patience_num) early_stopping_check = 0;
+					if (curr_patience_num >= patience_num) early_stopping_check = 0;
 				}
 				else
 				{
