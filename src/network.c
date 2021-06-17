@@ -177,12 +177,23 @@ float get_current_rate(network net)
 			//static float prev_loss = 0.0;
 			//float loss = fabs(get_network_cost(net) - prev_loss);
 			//prev_loss = get_network_cost(net);
-			rate = get_network_cost(net) * net.learning_rate;
-			printf("\n SGD rate policy in network.c line 181: making rate of %f \n", rate);
-			if (rate < net.learning_rate_min)
+			int isnan = 0;
+			float cost = get_network_cost(net);
+			if (!(cost == cost)) {
+				printf("\n network.c line 182: cost is NAN");
+				isnan=1;
+			}
+			if (!(net.learning_rate == net.learning_rate)) {				
+				printf("\n network.c line 185: rate is NAN");
+				isnan=1;
+			}
+			rate = cost * net.learning_rate;
+			printf("\n MBGS rate policy in network.c line 188: cost of %f with rate of %f making %f\n", cost, net.learning_rate, rate);
+			if (rate < net.learning_rate_min || isnan)
 			{
 				rate = net.learning_rate_min;
 			}
+			printf("\n network.c line 193: min rate is %f so used rate is %f\n", net.learning_rate_min, rate);
 			return rate;
 		}
         default:
