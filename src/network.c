@@ -174,28 +174,44 @@ float get_current_rate(network net)
         }
         case MBGD:
 		{
-			//static float prev_loss = 0.0;
-			//float loss = fabs(get_network_cost(net) - prev_loss);
-			//prev_loss = get_network_cost(net);
+			static float prev_loss = 0.0;
+			float cost = fabs(get_network_cost(net) - prev_loss);
+			prev_loss = get_network_cost(net);
 			int isnan = 0;
-			float cost = get_network_cost(net);
-			printf("\nCost is %f	|", cost);
+//			float cost = get_network_cost(net);
+			printf(" [ Cost is %f ] ", cost);
 			if (cost != cost) {
-				printf("\n network.c line 182: cost is NAN");
+				printf(" [ network.c line 182: cost is NAN ] ");
 				isnan=1;
 			}
 			if (net.learning_rate != net.learning_rate) {
-				printf("\n network.c line 185: rate is NAN");
+				printf(" [ network.c line 185: rate is NAN ] ");
 				isnan=1;
 			}
-			rate = cost * net.learning_rate;
-			printf("	MBGS rate policy in network.c line 188: cost of %f with rate of %f making %f\n", cost, net.learning_rate, rate);
-			if (rate < net.learning_rate_min || isnan)
-			{
-				rate = net.learning_rate_min;
+			if (cost == prev_loss) {
+				printf(" [ this is first time MBGD is used ] ");
+				rate = net.learning_rate;
+				net.learning_rate = net.learning_rate_min;
+				return rate;
 			}
-			printf("\n network.c line 193: min rate is %f so used rate is %f\n", net.learning_rate_min, rate);
-			return rate;
+			rate = cost * net.learning_rate;
+			printf("\n [ MBGS rate policy in network.c line 188: cost slope of %f with rate of %f making %f ] ", cost, net.learning_rate, rate);
+			if (isnan)
+			{
+				printf(" [ network.c line 200: Nan rate used is %f ] ", net.learning_rate);
+				return net.learning_rate;
+			} else if (rate < net.learning_rate_min) 
+			{
+				printf(" [ network.c line 205: Nan rate used is %f ] ", net.learning_rate_min);
+				return net.learning_rate_min;
+			} else (rate > 0.001)
+			{
+				printf(" [ rate above max uses 0.001 ] ");
+				net.learning_rate = 0.001;
+				return net.learning_rate;
+			}
+			net.learning_rate = rate;
+			return net.learning_rate;
 		}
         default:
             fprintf(stderr, "Policy is weird!\n");

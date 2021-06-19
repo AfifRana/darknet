@@ -801,7 +801,7 @@ void forward_yolo_layer(const layer l, network_state state)
             float badlabels_threshold = rolling_max - progress_badlabels * fabs(rolling_max - final_badlebels_threshold);
             badlabels_threshold = max_val_cmp(final_badlebels_threshold, badlabels_threshold);
             for (i = 0; i < l.batch * l.outputs; ++i) {
-                if (fabs(l.delta[i]) > badlabels_threshold)
+                if (fabs(l.delta[i]) > badlabels_threshold || l.delta[i] != l.delta[i])
                     l.delta[i] = 0;
             }
             printf(" rolling_std = %f, rolling_max = %f, rolling_avg = %f \n", rolling_std, rolling_max, rolling_avg);
@@ -824,7 +824,7 @@ void forward_yolo_layer(const layer l, network_state state)
             for (i = 0; i < l.batch * l.outputs; ++i) {
                 if (l.delta[i] != 0) {
                     counter_all++;
-                    if (fabs(l.delta[i]) > (*state.net.badlabels_reject_threshold)) {
+                    if (fabs(l.delta[i]) > (*state.net.badlabels_reject_threshold) || l.delta[i] != l.delta[i]) {
                         counter_reject++;
                         l.delta[i] = 0;
                     }
@@ -849,7 +849,7 @@ void forward_yolo_layer(const layer l, network_state state)
         if (state.net.equidistant_point && state.net.equidistant_point < iteration_num) {
             printf(" equidistant_point loss_threshold = %f, start_it = %d, progress = %3.1f %% \n", ep_loss_threshold, state.net.equidistant_point, progress * 100);
             for (i = 0; i < l.batch * l.outputs; ++i) {
-                if (fabs(l.delta[i]) < ep_loss_threshold)
+                if (fabs(l.delta[i]) < ep_loss_threshold || l.delta[i] != l.delta[i])
                     l.delta[i] = 0;
             }
         }
@@ -912,6 +912,7 @@ void forward_yolo_layer(const layer l, network_state state)
             else {
                 avg_iou_loss = count > 0 ? l.iou_normalizer * (tot_iou_loss / count) : 0;
             }
+            printf(" [yolo_layer.c line 915] avgloss = %f classloss = %f ", avg_iou_loss, classification_loss);
             *(l.cost) = avg_iou_loss + classification_loss;
         }
 
