@@ -190,12 +190,13 @@ float get_current_rate(network net)
 			}
 			if (cost == prev_loss) {
 				printf(" [ this is first time MBGD is used ] ");
-				rate = net.learning_rate;
-				net.learning_rate = net.learning_rate_min;
-				return rate;
+//				rate = net.learning_rate;
+//				net.learning_rate = net.learning_rate_min;
+//				return rate;
+				return net.learning_rate;
 			}
-			rate = cost * net.learning_rate;
-			printf("\n [ MBGS rate policy in network.c line 188: cost slope of %f with rate of %f making %f ] ", cost, net.learning_rate, rate);
+			rate = cost * net.learning_rate_min;
+			printf("\n [ MBGS rate policy in network.c line 188: cost slope of %f with rate of %f making %f ] ", cost, net.learning_rate_min, rate);
 			if (isnan)
 			{
 				printf(" [ network.c line 200: Nan rate used is %f ] ", net.learning_rate);
@@ -207,11 +208,13 @@ float get_current_rate(network net)
 			} else (rate > 0.001)
 			{
 				printf(" [ rate above max uses 0.001 ] ");
-				net.learning_rate = 0.001;
-				return net.learning_rate;
+//				net.learning_rate = 0.001;
+//				return net.learning_rate;
+				return 0.001;
 			}
-			net.learning_rate = rate;
-			return net.learning_rate;
+//			net.learning_rate = rate;
+//			return net.learning_rate;
+			return rate;
 		}
         default:
             fprintf(stderr, "Policy is weird!\n");
