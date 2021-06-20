@@ -205,7 +205,7 @@ float get_current_rate(network net)
 			{
 				printf(" [ network.c line 205: Nan rate used is %f ] ", net.learning_rate_min);
 				return net.learning_rate_min;
-			} else (rate > 0.001)
+			} else if (rate > 0.001)
 			{
 				printf(" [ rate above max uses 0.001 ] ");
 //				net.learning_rate = 0.001;
