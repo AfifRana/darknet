@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Darknet",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "dark::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-dark-Debug-a4b1f18357c352519e5f.json",
+					"name" : "dark",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "darknet::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-darknet-Debug-720e34c032bf5ed9d58a.json",
+					"name" : "darknet",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uselib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uselib-Debug-fe87d3865ee6de51c84e.json",
+					"name" : "uselib",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "E:/Data Afif/Pra TA - TA/Source Code/darknet/out/build/x64-Debug",
+		"source" : "E:/Data Afif/Pra TA - TA/Source Code/darknet"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}
