@@ -2149,7 +2149,8 @@ unsigned short early_stopping_system(float valid_map)
 {
 	static float *valid_map_prev = NULL;
 	static float temp;
-	
+
+    // edit save weight
 	//static unsigned short patience_counter = 0;
 	unsigned short patience = global_patience;
 	
