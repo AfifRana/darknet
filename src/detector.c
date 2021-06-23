@@ -364,7 +364,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         fflush(stdout);
 
         int draw_precision = 0;
-        if ((calc_map && (iteration >= next_map_calc || iteration == net.max_batches)) || (use_early_stopping && iteration >= net.burn_in)) {
+        if (calc_map && (iteration >= next_map_calc || iteration == net.max_batches)) {
 //        if (1) {
             if (l.random) {
                 printf("Resizing to initial size: %d x %d ", init_w, init_h);
