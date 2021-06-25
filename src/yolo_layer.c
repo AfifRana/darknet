@@ -912,7 +912,7 @@ void forward_yolo_layer(const layer l, network_state state)
             else {
                 avg_iou_loss = count > 0 ? l.iou_normalizer * (tot_iou_loss / count) : 0;
             }
-            printf(" [yolo_layer.c line 915] avgloss = %f classloss = %f ", avg_iou_loss, classification_loss);
+            //printf(" [yolo_layer.c line 915] avgloss = %f classloss = %f ", avg_iou_loss, classification_loss);
             *(l.cost) = avg_iou_loss + classification_loss;
         }
 

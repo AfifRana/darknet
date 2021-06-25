@@ -321,9 +321,9 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         */
 
         const double load_time = (what_time_is_it_now() - time);
-        printf("Loaded: %lf seconds", load_time);
-        if (load_time > 0.1 && avg_loss > 0) printf(" - performance bottleneck on CPU or Disk HDD/SSD");
-        printf("\n");
+        //printf("Loaded: %lf seconds", load_time);
+        //if (load_time > 0.1 && avg_loss > 0) printf(" - performance bottleneck on CPU or Disk HDD/SSD");
+        //printf("\n");
 
         time = what_time_is_it_now();
         float loss = 0;
@@ -351,12 +351,12 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         //next_map_calc = fmax(next_map_calc, 400);
         if (calc_map) {
             printf("\n (next mAP calculation at %d iterations) ", next_map_calc);
-            if (mean_average_precision > 0) printf("\n Last accuracy mAP@0.5 = %2.2f %%, best = %2.2f %% ", mean_average_precision * 100, best_map * 100);
+            //if (mean_average_precision > 0) printf("\n Last accuracy mAP@0.5 = %2.2f %%, best = %2.2f %% ", mean_average_precision * 100, best_map * 100);
         }
 
         if (net.cudnn_half) {
             if (iteration < net.burn_in * 3) fprintf(stderr, "\n Tensor Cores are disabled until the first %d iterations are reached.\n", 3 * net.burn_in);
-            else fprintf(stderr, "\n Tensor Cores are used.\n");
+            else fprintf(stderr, "[ Tensor Cores are used. ]  ");
             fflush(stderr);
         }
         printf("\n %d: %f, %f avg loss, %f rate, %lf seconds, %d images, %f hours left\n", iteration, loss, avg_loss, get_current_rate(net), (what_time_is_it_now() - time), iteration*imgs, avg_time);
@@ -483,7 +483,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
                 printf(" EMA weights are saved to the file: %s \n", buff);
             }
         }
-        printf(" Last Global patience: %d, use_early_stopping: %d, early_stopping_check: %d, curr_patience_num: %d, patience_num: %d\n", global_patience, use_early_stopping, early_stopping_check, curr_patience_num, patience_num);
+        //printf(" Last Global patience: %d, use_early_stopping: %d, early_stopping_check: %d, curr_patience_num: %d, patience_num: %d\n", global_patience, use_early_stopping, early_stopping_check, curr_patience_num, patience_num);
         free_data(train);
     }
 #ifdef GPU
@@ -521,7 +521,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         net_map.n = 0;
         free_network(net_map);
     }
-    printf("[ bug fixing attemp June 15 10:12 ]");
+    //printf("[ bug fixing attemp June 15 10:12 ]");
 }
 
 
@@ -1041,7 +1041,7 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
         getchar();
     }
     srand(time(0));
-    printf("\n calculation mAP (mean average precision)...\n");
+    printf("\n [calculation mAP (mean average precision)...]  ");
 
     list *plist = get_paths(valid_images);
     char **paths = (char **)list_to_array(plist);
@@ -1059,7 +1059,7 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
         layer lk = net.layers[k];
         if (lk.type == YOLO || lk.type == GAUSSIAN_YOLO || lk.type == REGION) {
             l = lk;
-            printf(" Detection layer: %d - type = %d \n", k, l.type);
+//            printf(" Detection layer: %d - type = %d \n", k, l.type);
         }
     }
     int classes = l.classes;
@@ -1114,7 +1114,7 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
 //    int sum_rows= 0;
 //    float sum_cost = 0.0;
     for (i = nthreads; i < m + nthreads; i += nthreads) {
-        fprintf(stderr, "\r%d", i);
+//        fprintf(stderr, "\r%d", i);
         for (t = 0; t < nthreads && (i + t - nthreads) < m; ++t) {
             pthread_join(thr[t], 0);
             val[t] = buf[t];
@@ -1301,7 +1301,7 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
     for (i = 0; i < classes; ++i) {
         pr[i] = (pr_t*)xcalloc(detections_count, sizeof(pr_t));
     }
-    printf("\n detections_count = %d, unique_truth_count = %d  \n", detections_count, unique_truth_count);
+//    printf("\n detections_count = %d, unique_truth_count = %d  \n", detections_count, unique_truth_count);
 
 
     int* detection_per_class_count = (int*)xcalloc(classes, sizeof(int));
@@ -1412,8 +1412,8 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
             avg_precision = avg_precision / map_points;
         }
 
-        printf("class_id = %d, name = %s, ap = %2.2f%%   \t (TP = %d, FP = %d) \n",
-            i, names[i], avg_precision * 100, tp_for_thresh_per_class[i], fp_for_thresh_per_class[i]);
+//        printf("class_id = %d, name = %s, ap = %2.2f%%   \t (TP = %d, FP = %d) \n",
+//            i, names[i], avg_precision * 100, tp_for_thresh_per_class[i], fp_for_thresh_per_class[i]);
 
         float class_precision = (float)tp_for_thresh_per_class[i] / ((float)tp_for_thresh_per_class[i] + (float)fp_for_thresh_per_class[i]);
         float class_recall = (float)tp_for_thresh_per_class[i] / ((float)tp_for_thresh_per_class[i] + (float)(truth_classes_count[i] - tp_for_thresh_per_class[i]));
@@ -1425,18 +1425,18 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
     const float cur_precision = (float)tp_for_thresh / ((float)tp_for_thresh + (float)fp_for_thresh);
     const float cur_recall = (float)tp_for_thresh / ((float)tp_for_thresh + (float)(unique_truth_count - tp_for_thresh));
     const float f1_score = 2.F * cur_precision * cur_recall / (cur_precision + cur_recall);
-    printf("\n for conf_thresh = %1.2f, precision = %1.2f, recall = %1.2f, F1-score = %1.2f \n",
-        thresh_calc_avg_iou, cur_precision, cur_recall, f1_score);
+//    printf("\n for conf_thresh = %1.2f, precision = %1.2f, recall = %1.2f, F1-score = %1.2f \n",
+//        thresh_calc_avg_iou, cur_precision, cur_recall, f1_score);
 
-    printf(" for conf_thresh = %0.2f, TP = %d, FP = %d, FN = %d, average IoU = %2.2f %% \n",
-        thresh_calc_avg_iou, tp_for_thresh, fp_for_thresh, unique_truth_count - tp_for_thresh, avg_iou * 100);
+//    printf(" for conf_thresh = %0.2f, TP = %d, FP = %d, FN = %d, average IoU = %2.2f %% \n",
+//        thresh_calc_avg_iou, tp_for_thresh, fp_for_thresh, unique_truth_count - tp_for_thresh, avg_iou * 100);
 
     mean_average_precision = mean_average_precision / classes;
-    printf("\n IoU threshold = %2.0f %%, ", iou_thresh * 100);
-    if (map_points) printf("used %d Recall-points \n", map_points);
-    else printf("used Area-Under-Curve for each unique Recall \n");
+//    printf("\n IoU threshold = %2.0f %%, ", iou_thresh * 100);
+//    if (map_points) printf("used %d Recall-points \n", map_points);
+//    else printf("used Area-Under-Curve for each unique Recall \n");
 
-    printf(" mean average precision (mAP@%0.2f) = %f, or %2.2f %% \n", iou_thresh, mean_average_precision, mean_average_precision * 100);
+    printf("\n[ mean average precision (mAP@%0.2f) = %f, or %2.2f %% ] ", iou_thresh, mean_average_precision, mean_average_precision * 100);
 
     for (i = 0; i < classes; ++i) {
         free(pr[i]);
@@ -1450,11 +1450,11 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
     free(tp_for_thresh_per_class);
     free(fp_for_thresh_per_class);
 
-    fprintf(stderr, "Total Detection Time: %d Seconds\n", (int)(time(0) - start));
-    printf("\nSet -points flag:\n");
-    printf(" `-points 101` for MS COCO \n");
-    printf(" `-points 11` for PascalVOC 2007 (uncomment `difficult` in voc.data) \n");
-    printf(" `-points 0` (AUC) for ImageNet, PascalVOC 2010-2012, your custom dataset\n");
+    fprintf(stderr, "[ Total Detection Time: %d Seconds ] ", (int)(time(0) - start));
+//    printf("\nSet -points flag:\n");
+//    printf(" `-points 101` for MS COCO \n");
+//    printf(" `-points 11` for PascalVOC 2007 (uncomment `difficult` in voc.data) \n");
+//    printf(" `-points 0` (AUC) for ImageNet, PascalVOC 2010-2012, your custom dataset\n");
     if (reinforcement_fd != NULL) fclose(reinforcement_fd);
 
     // free memory
@@ -2141,12 +2141,12 @@ unsigned short early_stopping_system(float valid_map)
 		temp = valid_map;
 		valid_map_prev = &temp;
 		patience_counter = 0;
-		printf("\n[ Early stopping system initialized ]\n");
+		printf("\n[ Early stopping system initialized ]");
 		return 0;		
 	} 
 	else if ((patience_counter>0 && *valid_map_prev>=valid_map) || (patience_counter==0 && *valid_map_prev>valid_map)) 
 	{
-		printf("\n[[ Prev mAP value = %f ]]\n[[ Curr mAP value = %f ]]\n[[ Patience counter = %d ]]\n", *valid_map_prev, valid_map, patience_counter);
+		printf("\n[ Prev mAP value = %f ] [ Curr mAP value = %f ] [ Patience counter = %d ]", *valid_map_prev, valid_map, patience_counter);
 		*valid_map_prev = valid_map;
 		patience_counter += 1;
 		
@@ -2158,7 +2158,7 @@ unsigned short early_stopping_system(float valid_map)
 	} 
 	else 
 	{
-		printf("\n[[ prev mAP value = %f ]]\n[[ curr mAP value = %f]]\n[[ Patience counter = %d ]]\n", *valid_map_prev, valid_map, patience_counter);
+		printf("\n[ prev mAP value = %f ] [ curr mAP value = %f] [ Patience counter = %d ]", *valid_map_prev, valid_map, patience_counter);
 		*valid_map_prev = valid_map;
 		patience_counter = 0;
 		return 0;
