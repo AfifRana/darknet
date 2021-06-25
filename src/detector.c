@@ -2162,7 +2162,7 @@ unsigned short early_stopping_system(float valid_map)
 		printf("\n[ Early stopping system initialized ]");
 		return 0;		
 	} 
-	else if ((patience_counter>0 && *valid_map_prev>=valid_map) || (patience_counter==0 && *valid_map_prev>valid_map)) 
+	else if (*valid_map_prev>=valid_map)
 	{
 		printf("\n[ Prev mAP value = %f ] [ Curr mAP value = %f ] [ Patience counter = %d ]", *valid_map_prev, valid_map, patience_counter);
 		*valid_map_prev = valid_map;
