@@ -494,7 +494,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 				sprintf(buff, "    [ New best mAP! ]");
 				fprintf(logfp, buff);
 				fclose(logfp);
-                char buff[256];
+                
                 sprintf(buff, "%s/%s_best.weights", backup_directory, base);
                 save_weights(net, buff);
             }
