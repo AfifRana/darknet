@@ -23,6 +23,7 @@ int check_mistakes = 0;
 unsigned short global_patience = 0;
 // edit save weight
 unsigned short patience_counter = 0;
+FILE *logfp;
 
 static int coco_ids[] = { 1,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,67,70,72,73,74,75,76,77,78,79,80,81,82,84,85,86,87,88,89,90 };
 
@@ -38,43 +39,58 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     char *backup_directory = option_find_str(options, "backup", "/backup/");
     // hardcode
     use_early_stopping = option_find_int(options, "use_early_stopping", 1);
+    char logPath[256];
+	sprintf(logPath, "%s/log.txt", backup_directory);
     if (use_early_stopping != 0)
 	{
-		printf("\n Detector.c line 39: Early stopping is used\n");
+		printf("\n Detector.c line 39: Early stopping is used");
+		logfp = fopen(logPath, "a+");
+		char buff[256];	
+		sprintf(buff, "\n Detector.c line 39: Early stopping is used");
+		fprintf(logfp, buff);
+		fclose(logfp);
 		early_stopping_check = 1;
 	}
 	// hardcode
     patience_num = option_find_int(options, "patience_num", 3);
-	if (patience_num != 0) printf("\n detector.c line 39: number of patience used is %d\n", patience_num);
+	if (patience_num != 0) 
+	{
+		printf("\n detector.c line 39: number of patience used is %d", patience_num);
+		logfp = fopen(logPath, "a+");
+		char buff[256];	
+		sprintf(buff, "\n detector.c line 39: number of patience used is %d", patience_num);
+		fprintf(logfp, buff);
+		fclose(logfp);
+	}
 	// hardcode
 	int patienceArr[3] = {1, 3, 5};
-	printf("\n Detector.c line 46: Patience array created\n");
+//	printf("\n Detector.c line 46: Patience array created\n");
 	// hardcode
-	if (1 == 1)
-	{
-		global_patience = patienceArr[0];
-	}
-	else if (patience_num == 1 && use_early_stopping == 1)
-	{
-		global_patience = (unsigned short) option_find_int(options, "patience", 0);
-		if (global_patience < 1)
-		{
-			global_patience = (unsigned short) option_find_int(options, "patience1", 1);
-		}
-		printf("\n detector.c line 48: the single patience value is %d\n", global_patience);
-	}
-	else if (patience_num > 1 && use_early_stopping == 1)
-	{
-		int patienceI;
-		for (patienceI = 0; patienceI < patience_num; patienceI++)
-		{
-			char patienceTxt[256];
-			sprintf(patienceTxt, "patience%d", patienceI+1);
-			patienceArr[patienceI] = option_find_int(options, patienceTxt, 1);
-			if (patienceArr[patienceI] != 0) printf("\n detector.c line 58: multi patience value, patience%d = %d\n", patienceI+1, patienceArr[patienceI]);
-		}
-		global_patience = patienceArr[0];
-	}
+//	if (1 == 1)
+//	{
+	global_patience = patienceArr[0];
+//	}
+//	else if (patience_num == 1 && use_early_stopping == 1)
+//	{
+//		global_patience = (unsigned short) option_find_int(options, "patience", 0);
+//		if (global_patience < 1)
+//		{
+//			global_patience = (unsigned short) option_find_int(options, "patience1", 1);
+//		}
+//		printf("\n detector.c line 48: the single patience value is %d\n", global_patience);
+//	}
+//	else if (patience_num > 1 && use_early_stopping == 1)
+//	{
+//		int patienceI;
+//		for (patienceI = 0; patienceI < patience_num; patienceI++)
+//		{
+//			char patienceTxt[256];
+//			sprintf(patienceTxt, "patience%d", patienceI+1);
+//			patienceArr[patienceI] = option_find_int(options, patienceTxt, 1);
+//			if (patienceArr[patienceI] != 0) printf("\n detector.c line 58: multi patience value, patience%d = %d\n", patienceI+1, patienceArr[patienceI]);
+//		}
+//		global_patience = patienceArr[0];
+//	}
 
     network net_map;
     if (calc_map) {
@@ -145,7 +161,12 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     }
 
     int imgs = net.batch * net.subdivisions * ngpus;
-    printf("Learning Rate: %g, Momentum: %g, Decay: %g\n", net.learning_rate, net.momentum, net.decay);
+    printf("\nLearning Rate: %g, Momentum: %g, Decay: %g", net.learning_rate, net.momentum, net.decay);
+    logfp = fopen(logPath, "a+");
+	char buff[256];	
+	sprintf(buff, "\nLearning Rate: %g, Momentum: %g, Decay: %g", net.learning_rate, net.momentum, net.decay);
+	fprintf(logfp, buff);
+	fclose(logfp);
     data train, buffer;
 
     layer l = net.layers[net.n - 1];
@@ -353,6 +374,11 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         //next_map_calc = fmax(next_map_calc, 400);
         if (calc_map) {
             printf("\n (next mAP calculation at %d iterations) ", next_map_calc);
+            logfp = fopen(logPath, "a+");
+			char buff[256];	
+			sprintf(buff, "\n (next mAP calculation at %d iterations) ", next_map_calc);
+			fprintf(logfp, buff);
+			fclose(logfp);
             //if (mean_average_precision > 0) printf("\n Last accuracy mAP@0.5 = %2.2f %%, best = %2.2f %% ", mean_average_precision * 100, best_map * 100);
         }
 
@@ -361,8 +387,15 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             else fprintf(stderr, "[ Tensor Cores are used. ]  ");
             fflush(stderr);
         }
-        printf("\n %d: %f, %f avg loss, %f rate, %lf seconds, %d images, %f hours left\n", iteration, loss, avg_loss, get_current_rate(net), (what_time_is_it_now() - time), iteration*imgs, avg_time);
-        printf(" Global patience: %d, use_early_stopping: %d, early_stopping_check: %d, curr_patience_num: %d, patience_num: %d\n", global_patience, use_early_stopping, early_stopping_check, curr_patience_num, patience_num);
+        printf("\n %d: %f, %f avg loss, %f rate, %lf seconds, %d images, %f hours left", iteration, loss, avg_loss, get_current_rate(net), (what_time_is_it_now() - time), iteration*imgs, avg_time);
+        printf("\n Global patience: %d, use_early_stopping: %d, early_stopping_check: %d, curr_patience_num: %d, patience_num: %d", global_patience, use_early_stopping, early_stopping_check, curr_patience_num, patience_num);
+		logfp = fopen(logPath, "a+");
+		char buff[256];	
+		sprintf(buff, "\n %d: %f, %f avg loss, %f rate, %lf seconds, %d images, %f hours left", iteration, loss, avg_loss, get_current_rate(net), (what_time_is_it_now() - time), iteration*imgs, avg_time);
+		fprintf(logfp, buff);
+		sprintf(buff, "\n Global patience: %d, use_early_stopping: %d, early_stopping_check: %d, curr_patience_num: %d, patience_num: %d", global_patience, use_early_stopping, early_stopping_check, curr_patience_num, patience_num);
+		fprintf(logfp, buff);
+		fclose(logfp);
         fflush(stdout);
 
         int draw_precision = 0;
@@ -420,12 +453,17 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
                 }
             }
 			if (early_stop == 1) {
-				printf("\n detector.c line 368: early stop triggered \n");
+				printf("\n detector.c line 368: early stop triggered");
+				logfp = fopen(logPath, "a+");
+				char buff[256];	
+				sprintf(buff, "\n detector.c line 368: early stop triggered");
+				fprintf(logfp, buff);
+				fclose(logfp);
                 // edit save weight
 				//char buff[256];
 				if (patience_num > 1)
 				{
-					printf("\n detector.c line 371: reset early stop for TA scenario\n");
+					//printf("\n detector.c line 371: reset early stop for TA scenario\n");
 					early_stop = 0;
                     // edit save weight
 					//sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, global_patience);
@@ -442,10 +480,20 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
                 // edit save weight
 				//save_weights(net, buff);
 			}
-            printf("\n mean_average_precision (mAP@0.5) = %f \n", mean_average_precision);
+            printf("\n mean_average_precision (mAP@0.5) = %f", mean_average_precision);
+			logfp = fopen(logPath, "a+");
+			char buff[256];	
+			sprintf(buff, "\n mean_average_precision (mAP@0.5) = %f", mean_average_precision);
+			fprintf(logfp, buff);
+			fclose(logfp);
             if (mean_average_precision > best_map) {
                 best_map = mean_average_precision;
-                printf("New best mAP!\n");
+                printf("    [ New best mAP! ]");
+				logfp = fopen(logPath, "a+");
+				char buff[256];	
+				sprintf(buff, "    [ New best mAP! ]");
+				fprintf(logfp, buff);
+				fclose(logfp);
                 char buff[256];
                 sprintf(buff, "%s/%s_best.weights", backup_directory, base);
                 save_weights(net, buff);
@@ -538,7 +586,12 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         net_map.n = 0;
         free_network(net_map);
     }
-    //printf("[ bug fixing attemp June 15 10:12 ]");
+    printf("\n[ Training Finish ]");
+	logfp = fopen(logPath, "a+");
+	char buff[256];	
+	sprintf(buff, "\n[ Training Finish ]");
+	fprintf(logfp, buff);
+	fclose(logfp);
 }
 
 
