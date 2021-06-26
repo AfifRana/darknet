@@ -588,7 +588,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     }
     printf("\n[ Training Finish ]");
 	logfp = fopen(logPath, "a+");
-	char buff[256];	
+	//char buff[256];	
 	sprintf(buff, "\n[ Training Finish ]");
 	fprintf(logfp, buff);
 	fclose(logfp);
