@@ -63,12 +63,13 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 		fclose(logfp);
 	}
 	// hardcode
+    if (curr_patience_num >= patience_num) early_stopping_check = 0;
 	int patienceArr[3] = {1, 3, 5};
 //	printf("\n Detector.c line 46: Patience array created\n");
 	// hardcode
 //	if (1 == 1)
 //	{
-	global_patience = patienceArr[0];
+	global_patience = patienceArr[curr_patience_num - 1];
 //	}
 //	else if (patience_num == 1 && use_early_stopping == 1)
 //	{
@@ -440,18 +441,19 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             if (early_stopping_check != 0)
 			{
 				early_stop = early_stopping_system(mean_average_precision);
-			}
-            // edit save weight
-            if (patience_counter == 0) {
-                char buff[256];
-                if (patience_num > 1) {
-                    sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, global_patience);
-                    save_weights(net, buff);
-                } else {
-                    sprintf(buff, "%s/%s_earlystop.weights", backup_directory, base);
-                    save_weights(net, buff);
+                
+                // edit save weight
+                if (patience_counter == 0) {
+                    char buff[256];
+                    if (patience_num > 1) {
+                        sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, global_patience);
+                        save_weights(net, buff);
+                    } else {
+                        sprintf(buff, "%s/%s_earlystop.weights", backup_directory, base);
+                        save_weights(net, buff);
+                    }
                 }
-            }
+			}
 			if (early_stop == 1) {
 				printf("\n detector.c line 368: early stop triggered");
 				logfp = fopen(logPath, "a+");
