@@ -177,19 +177,11 @@ float get_current_rate(network net)
 			static float prev_loss = 0.0;
 			float cost = fabs(get_network_cost(net) - prev_loss);
 			prev_loss = get_network_cost(net);
-			int isnan = 0;
-			
-			if (cost != cost) isnan=1;
-			if (net.learning_rate != net.learning_rate) isnan=1;
 			if (cost == prev_loss) return net.learning_rate;
 			
 			rate = cost * net.learning_rate_min;
 			
-			if (isnan)
-			{
-				return net.learning_rate;
-			} 
-			else if (rate < net.learning_rate_min) 
+			if (rate < net.learning_rate_min) 
 			{
 				return net.learning_rate_min;
 			} 
