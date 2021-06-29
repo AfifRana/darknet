@@ -68,7 +68,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 		fprintf(logfp, buff);
 		fclose(logfp);
 	}
-    if (curr_patience_num >= patience_num) early_stopping_check = 0;
+    if (curr_patience_num > patience_num) early_stopping_check = 0;
 	int patienceArr[2] = {3, 5};
 	global_patience = patienceArr[curr_patience_num - 1];
 
@@ -448,7 +448,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 					//sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, global_patience);
 					global_patience = patienceArr[curr_patience_num];
 					curr_patience_num++;
-					if (curr_patience_num >= patience_num) early_stopping_check = 0;
+					if (curr_patience_num > patience_num) early_stopping_check = 0;
 				}
 				else
 				{
@@ -2205,6 +2205,7 @@ unsigned short early_stopping_system(float valid_map)
 	} 
 	else if (*valid_map_prev>=valid_map)
 	{
+		patience_counter += 1;
 		printf("\n[ Prev mAP value = %f ] [ Curr mAP value = %f ] [ Patience counter = %d ]", *valid_map_prev, valid_map, patience_counter);
 		logfp = fopen(logPath, "a+");
 		char buff[256];	
@@ -2212,7 +2213,6 @@ unsigned short early_stopping_system(float valid_map)
 		fprintf(logfp, buff);
 		fclose(logfp);
 		*valid_map_prev = valid_map;
-		patience_counter += 1;
 		
 		if (patience_counter >= patience){
 			return 1;
@@ -2222,6 +2222,7 @@ unsigned short early_stopping_system(float valid_map)
 	} 
 	else 
 	{
+		patience_counter = 0;
 		printf("\n[ prev mAP value = %f ] [ curr mAP value = %f] [ Patience counter = %d ]", *valid_map_prev, valid_map, patience_counter);
 		logfp = fopen(logPath, "a+");
 		char buff[256];	
@@ -2229,7 +2230,6 @@ unsigned short early_stopping_system(float valid_map)
 		fprintf(logfp, buff);
 		fclose(logfp);
 		*valid_map_prev = valid_map;
-		patience_counter = 0;
 		return 0;
 	}	
 }
