@@ -23,6 +23,7 @@ int check_mistakes = 0;
 unsigned short global_patience = 0;
 // edit save weight
 FILE *logfp;
+char logPath[256];
 
 // [Lanjut training] Edit nilai patience_counter sama past_map dan train again ganti 1
 unsigned short patience_counter = 0;
@@ -46,7 +47,6 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     char *backup_directory = option_find_str(options, "backup", "/backup/");
     
     use_early_stopping = option_find_int(options, "use_early_stopping", 1);
-    char logPath[256];
 	sprintf(logPath, "%s/log.txt", backup_directory);
     if (use_early_stopping != 0)
 	{
