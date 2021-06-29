@@ -1045,6 +1045,7 @@ LIB_API int network_width(network *net);
 LIB_API int network_height(network *net);
 LIB_API void optimize_picture(network *net, image orig, int max_layer, float scale, float rate, float thresh, int norm);
 LIB_API unsigned short early_stopping_system(float valid_map);
+LIB_API void writeLog(char *log);
 
 // image.h
 LIB_API void make_image_red(image im);
