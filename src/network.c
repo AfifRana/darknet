@@ -178,42 +178,25 @@ float get_current_rate(network net)
 			float cost = fabs(get_network_cost(net) - prev_loss);
 			prev_loss = get_network_cost(net);
 			int isnan = 0;
-//			float cost = get_network_cost(net);
-			//printf(" [ Cost is %f ] ", cost);
-			if (cost != cost) {
-				//printf(" [ network.c line 182: cost is NAN ] ");
-				isnan=1;
-			}
-			if (net.learning_rate != net.learning_rate) {
-				//printf(" [ network.c line 185: rate is NAN ] ");
-				isnan=1;
-			}
-			if (cost == prev_loss) {
-				//printf(" [ this is first time MBGD is used ] ");
-//				rate = net.learning_rate;
-//				net.learning_rate = net.learning_rate_min;
-//				return rate;
-				return net.learning_rate;
-			}
+			
+			if (cost != cost) isnan=1;
+			if (net.learning_rate != net.learning_rate) isnan=1;
+			if (cost == prev_loss) return net.learning_rate;
+			
 			rate = cost * net.learning_rate_min;
-			//printf("\n [ MBGS rate policy in network.c line 188: cost slope of %f with rate of %f making %f ] ", cost, net.learning_rate_min, rate);
+			
 			if (isnan)
 			{
-				//printf(" [ network.c line 200: Nan rate used is %f ] ", net.learning_rate);
 				return net.learning_rate;
-			} else if (rate < net.learning_rate_min) 
+			} 
+			else if (rate < net.learning_rate_min) 
 			{
-				//printf(" [ network.c line 205: Nan rate used is %f ] ", net.learning_rate_min);
 				return net.learning_rate_min;
-			} else if (rate > 0.001)
+			} 
+			else if (rate > 0.001)
 			{
-				//printf(" [ rate above max uses 0.001 ] ");
-//				net.learning_rate = 0.001;
-//				return net.learning_rate;
 				return 0.001;
 			}
-//			net.learning_rate = rate;
-//			return net.learning_rate;
 			return rate;
 		}
         default:
