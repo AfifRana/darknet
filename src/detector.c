@@ -38,7 +38,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 	int patience_num = 0;
 	
 	// [Lanjut training] Edit nilai cur patience, default 1 kalau dari awal
-	int curr_patience_num = 1;	
+	int curr_patience_num = 1;
+    float best_map = 0;
 	
 	int early_stopping_check = 0;
     list *options = read_data_cfg(datacfg);
@@ -163,7 +164,9 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     iter_save_last = get_current_iteration(net);
     iter_map = get_current_iteration(net);
     float mean_average_precision = -1;
-    float best_map = mean_average_precision;
+    if (train_again == 0) {
+        best_map = mean_average_precision;
+    }
 
     load_args args = { 0 };
     args.w = net.w;
