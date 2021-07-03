@@ -40,6 +40,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 	// [Lanjut training] Edit nilai cur patience, default 1 kalau dari awal
 	int curr_patience_num = 1;
     float best_map = 0;
+    int next_map_calc = 0;
 	
 	int early_stopping_check = 0;
     list *options = read_data_cfg(datacfg);
@@ -341,13 +342,10 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 
         int calc_map_for_each = 4 * train_images_num / (net.batch * net.subdivisions);  // calculate mAP for each 4 Epochs
         calc_map_for_each = fmax(calc_map_for_each, 100);
-        int next_map_calc = iter_map + calc_map_for_each;
-        next_map_calc = fmax(next_map_calc, net.burn_in);
-        
-        // [Lanjut training] ini isiin peritungan map selanjutnya harusnya kapan
-        if (train_again) {
-        	next_map_calc = 1000;
-		}
+        if (!train_again) {
+            next_map_calc = iter_map + calc_map_for_each;
+            next_map_calc = fmax(next_map_calc, net.burn_in);
+        }    
         //next_map_calc = fmax(next_map_calc, 400);
         if (calc_map) {
 			char buff[256];	
