@@ -414,8 +414,11 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
                 if (patience_counter == 0) {
                     char buff[256];
                     if (patience_num > 1) {
-                        sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, global_patience);
-                        save_weights(net, buff);
+                        //global_patience = patienceArr[curr_patience_num - 1];
+                        for(int i=curr_patience_num;i<=patience_num;i++){
+                            sprintf(buff, "%s/%s_earlystop_patience%d.weights", backup_directory, base, patienceArr[curr_patience_num - 1]);
+                            save_weights(net, buff);   
+                        }
                     } else {
                         sprintf(buff, "%s/%s_earlystop.weights", backup_directory, base);
                         save_weights(net, buff);
