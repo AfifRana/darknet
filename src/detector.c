@@ -57,7 +57,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 		writeLog(buff);
 		early_stopping_check = 1;
 	}
-    patience_num = option_find_int(options, "patience_num", 2);
+    patience_num = option_find_int(options, "patience_num", 3);
 	if (patience_num != 0) 
 	{
 		char buff[256];	
@@ -65,7 +65,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 		writeLog(buff);
 	}
     if (curr_patience_num > patience_num) early_stopping_check = 0;
-	int patienceArr[2] = {3, 5};
+	int patienceArr[3] = {2, 3, 5};
 	global_patience = patienceArr[curr_patience_num - 1];
 
     network net_map;
