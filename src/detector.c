@@ -225,7 +225,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         args.mini_batch = net.batch / net.time_steps;
         printf("\n Tracking! batch = %d, subdiv = %d, time_steps = %d, mini_batch = %d \n", net.batch, net.subdivisions, net.time_steps, args.mini_batch);
     }
-    //printf(" imgs = %d \n", imgs);
+    printf(" imgs = %d \n", imgs);
 
     pthread_t load_thread = load_data(args);
 

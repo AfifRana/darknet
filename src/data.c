@@ -1658,7 +1658,6 @@ void *run_thread_loop(void *ptr)
 void *load_threads(void *ptr)
 {
     //srand(time(0));
-    printf("Masuk sini");
     int i;
     load_args args = *(load_args *)ptr;
     if (args.threads == 0) args.threads = 1;
