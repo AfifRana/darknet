@@ -141,7 +141,6 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 	sprintf(buff, "\nLearning Rate: %g, Momentum: %g, Decay: %g", net.learning_rate, net.momentum, net.decay);
 	writeLog(buff);
     data train, buffer;
-    printf("Masuk sini");
 
     layer l = net.layers[net.n - 1];
     for (k = 0; k < net.n; ++k) {
@@ -213,8 +212,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     float max_img_loss = net.max_chart_loss;
     int number_of_lines = 100;
     int img_size = 1000;
-    char windows_name[100];
-    sprintf(windows_name, "%s/chart_%s.png", backup_directory, base);
+    char windows_name[200];
+    sprintf(windows_name, "chart_%s.png", base);
     img = draw_train_chart(windows_name, max_img_loss, net.max_batches, number_of_lines, img_size, dont_show, chart_path);
 #endif    //OPENCV
     if (net.contrastive && args.threads > net.batch/2) args.threads = net.batch / 2;
