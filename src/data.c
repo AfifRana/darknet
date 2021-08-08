@@ -1666,6 +1666,7 @@ void *load_threads(void *ptr)
     free(ptr);
     data* buffers = (data*)xcalloc(args.threads, sizeof(data));
     if (!threads) {
+        printf("Masuk sini");
         threads = (pthread_t*)xcalloc(args.threads, sizeof(pthread_t));
         run_load_data = (volatile int *)xcalloc(args.threads, sizeof(int));
         args_swap = (load_args *)xcalloc(args.threads, sizeof(load_args));
